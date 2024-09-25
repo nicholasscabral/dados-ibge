@@ -1,25 +1,18 @@
 import csv
 from collections import Counter
 
-# File paths
 PATH = "DADOS.txt"
-SECOND_CSV = "censo.csv"    # Name of the second CSV
-THIRD_CSV = "pib.csv"       # Name of the third CSV
-RISK_CSV = "risco.csv"      # Name of the risk CSV file
+SECOND_CSV = "censo.csv"    
+THIRD_CSV = "pib.csv"       
+RISK_CSV = "risco.csv"     
 
 def normalize_text(text):
-    """
-    Converts the first letter of each word to uppercase and removes any leading/trailing whitespaces.
-    """
     if isinstance(text, str):
         return " ".join(word.capitalize() for word in text.strip().lower().split())
     return text
 
 
 def get_column_data(column_name):
-    """
-    Returns the data from a specific column, if it exists in the dataset.
-    """
     if DATA_SET and column_name in DATA_SET[0]:
         return [line[column_name] for line in DATA_SET]
     else:
@@ -27,21 +20,14 @@ def get_column_data(column_name):
 
 
 def generate_csv_people_by_municipality():
-    """
-    Generates a CSV file with the number of people per municipality, including data from the second, third, risk, 
-    and sanitation CSVs.
-    """
     municipality_data = get_column_data("MUNICÍPIO")
 
-    # Count how many people exist per municipality in the first dataset
     municipality_count = Counter(municipality_data)
 
-    # Read the second, third, risk, and sanitation CSVs to get their data
     second_csv_data = read_second_csv()
     third_csv_data = read_third_csv()
     risk_csv_data = read_risk_csv()
 
-    # Generate the final CSV with the desired information
     with open(
         "pessoas_por_municipio_com_pib.csv", mode="w", newline="", encoding="utf-8"
     ) as file:
@@ -53,9 +39,8 @@ def generate_csv_people_by_municipality():
                 "Total de Pessoas atendidas pelo SUS",
                 "População",
                 "Porcentagem da população atendida pelo SUS",
-                "PIB",  # GDP column
-                "População exposta ao risco",  # New column for population exposed to risk
-                "Saneamento adequado"  # New column for adequate sanitation
+                "PIB", 
+                "População exposta ao risco",  
             ]
         )
 
@@ -83,10 +68,6 @@ def generate_csv_people_by_municipality():
 
 
 def read_txt_file():
-    """
-    Reads a .txt file separated by commas and returns the data as a list of dictionaries.
-    Each dictionary represents a row with keys as the column names.
-    """
     with open(PATH, mode="r", encoding="utf-8") as file:
         csv_reader = csv.DictReader(file)
         data = [line for line in csv_reader]
@@ -95,10 +76,6 @@ def read_txt_file():
 
 
 def read_second_csv():
-    """
-    Reads the second CSV file that contains the 'total' column by municipality.
-    Returns a dictionary with the municipality as the key and the 'total' value as the value.
-    """
     data = {}
     with open(SECOND_CSV, mode="r", encoding="utf-8") as file:
         csv_reader = csv.DictReader(file)
@@ -113,10 +90,6 @@ def read_second_csv():
 
 
 def read_third_csv():
-    """
-    Reads the third CSV file (pib.csv) containing GDP data by municipality.
-    Returns a dictionary with the municipality as the key and the GDP as the value.
-    """
     data = {}
     with open(THIRD_CSV, mode="r", encoding="utf-8") as file:
         csv_reader = csv.DictReader(file)
@@ -131,16 +104,12 @@ def read_third_csv():
 
 
 def read_risk_csv():
-    """
-    Reads the risk CSV file containing population exposed to risk data by municipality.
-    Returns a dictionary with the municipality as the key and the population at risk as the value.
-    """
     data = {}
     with open(RISK_CSV, mode="r", encoding="utf-8") as file:
         csv_reader = csv.DictReader(file)
         for line in csv_reader:
-            municipality = line.get("Local")  # Adjust based on provided CSV data
-            population_at_risk = line.get(" \"População exposta ao risco\"")  # Column for population exposed to risk
+            municipality = line.get("Local") 
+            population_at_risk = line.get(" \"População exposta ao risco\"")
             if municipality and population_at_risk:
                 normalized_municipality = normalize_text(municipality)
                 data[normalized_municipality] = population_at_risk
