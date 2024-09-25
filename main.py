@@ -3,7 +3,7 @@ from collections import Counter
 
 # File paths
 PATH = "DADOS.txt"
-SECOND_CSV = "OUTRO_DADOS_SEM_ASPAS.csv"  # Name of the second CSV
+SECOND_CSV = "censo.csv"  # Name of the second CSV
 
 
 def normalize_text(text):
