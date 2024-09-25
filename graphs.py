@@ -8,7 +8,7 @@ import numpy as np
 sns.set(style="whitegrid")
 
 # Read the CSV file
-data = pd.read_csv("pessoas_por_municipio_com_pib.csv")
+data = pd.read_csv("pessoas_por_municipio_com_pib_risco_cleaned.csv")
 
 # Removing the '%' symbol and converting the column to numeric
 # Replace 'N/A' and any other non-numeric values with NaN
@@ -130,13 +130,31 @@ plt.figure(figsize=(10, 6))
 sns.scatterplot(x='PIB (milhares)', y='Porcentagem da população atendida pelo SUS', data=data)
 plt.title('PIB vs. Porcentagem da população atendida pelo SUS')
 plt.xlabel('PIB (milhares)')
-plt.ylabel('Porcentagem da população atendida pelo SUS (%)')
+plt.ylabel('Porcentagem da população atendida pelo SUS')
 
 # Adding a trend line
 sns.regplot(x='PIB (milhares)', y='Porcentagem da população atendida pelo SUS', data=data, scatter=False, color='red', logx=True)
 
 plt.tight_layout()
-plt.savefig("./graphs_images/scatter_plot_pib_vs_sus_attendance_improved.png")
+plt.savefig("./graphs_images/scatter_plot_pib_vs_sus_attendance_percentage.png")
+plt.show()
+
+# Additional analysis: Correlation between PIB and Total de Pessoas atendidas pelo SUS
+correlation = data['PIB'].corr(data['Total de Pessoas atendidas pelo SUS'])
+print(f"Coeficiente de correlação entre PIB e Total de Pessoas atendidas pelo SUS: {correlation}")
+
+# Improved scatter plot with logarithmic scale for PIB vs Porcentagem da população atendida pelo SUS
+plt.figure(figsize=(10, 6))
+sns.scatterplot(x='PIB (milhares)', y='Total de Pessoas atendidas pelo SUS', data=data)
+plt.title('PIB vs. Total de Pessoas atendidas pelo SUS')
+plt.xlabel('PIB (milhares)')
+plt.ylabel('Total de Pessoas atendidas pelo SUS')
+
+# Adding a trend line
+sns.regplot(x='PIB (milhares)', y='Total de Pessoas atendidas pelo SUS', data=data, scatter=False, color='red', logx=True)
+
+plt.tight_layout()
+plt.savefig("./graphs_images/scatter_plot_pib_vs_sus_attendance_absolute.png")
 plt.show()
 
 # Top 10 municipalities with the highest PIB
@@ -163,4 +181,48 @@ plt.xlabel("PIB")
 plt.ylabel("Município")
 plt.tight_layout()
 plt.savefig("./graphs_images/top_10_lowest_pib.png")
+plt.show()
+
+# Additional analysis: Correlation between Population at Risk and Population served by SUS
+correlation_risk_sus = data['População exposta ao risco'].corr(data['Total de Pessoas atendidas pelo SUS'])
+print(f"Coeficiente de correlação entre População exposta ao risco e Total de Pessoas atendidas pelo SUS: {correlation_risk_sus}")
+
+# Scatter plot with regression line for Population at Risk vs. Population served by SUS
+plt.figure(figsize=(10, 6))
+sns.scatterplot(x='População exposta ao risco', y='Total de Pessoas atendidas pelo SUS', data=data)
+plt.title('População exposta ao risco vs. Total de Pessoas atendidas pelo SUS')
+plt.xlabel('População exposta ao risco')
+plt.ylabel('Total de Pessoas atendidas pelo SUS')
+
+# Adding a trend line
+sns.regplot(x='População exposta ao risco', y='Total de Pessoas atendidas pelo SUS', data=data, scatter=False, color='red')
+
+plt.tight_layout()
+plt.savefig("./graphs_images/scatter_plot_risk_vs_sus.png")
+plt.show()
+
+# Top 10 municipalities with the highest population at risk
+top_10_risk = data[data["População exposta ao risco"] > 0].nlargest(10, "População exposta ao risco")
+
+# Top 10 municipalities with the lowest population at risk
+bottom_10_risk = data[data["População exposta ao risco"] > 0].nsmallest(10, "População exposta ao risco")
+
+# Plotting the top 10 municipalities with the highest population at risk
+plt.figure(figsize=(12, 6))
+sns.barplot(x="População exposta ao risco", y="Município", data=top_10_risk, palette="Reds_d")
+plt.title("Top 10 Municípios com Maior População Exposta ao Risco")
+plt.xlabel("População Exposta ao Risco")
+plt.ylabel("Município")
+plt.tight_layout()
+plt.savefig("./graphs_images/top_10_highest_population_at_risk.png")
+plt.show()
+
+# Plotting the top 10 municipalities with the lowest population at risk
+plt.figure(figsize=(12, 6))
+sns.barplot(x="População exposta ao risco", y="Município", data=bottom_10_risk, palette="Blues_d")
+plt.title("Top 10 Municípios com Menor População Exposta ao Risco")
+plt.xlabel("População Exposta ao Risco")
+plt.ylabel("Município")
+plt.tight_layout()
+plt.savefig("./graphs_images/top_10_lowest_population_at_risk.png")
 plt.show()
