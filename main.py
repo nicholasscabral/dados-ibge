@@ -40,7 +40,6 @@ def generate_csv_people_by_municipality():
     second_csv_data = read_second_csv()
     third_csv_data = read_third_csv()
     risk_csv_data = read_risk_csv()
-    sanitation_csv_data = read_sanitation_csv()
 
     # Generate the final CSV with the desired information
     with open(
@@ -67,7 +66,6 @@ def generate_csv_people_by_municipality():
             total = second_csv_data.get(normalized_municipality, "N/A")
             pib = third_csv_data.get(normalized_municipality, "N/A")
             population_at_risk = risk_csv_data.get(normalized_municipality, "N/A")
-            sanitation = sanitation_csv_data.get(normalized_municipality, "N/A")
 
             # Replace 99999999999993 with 0 in the population exposed to risk
             if population_at_risk == "99999999999993":
